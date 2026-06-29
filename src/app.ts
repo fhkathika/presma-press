@@ -6,6 +6,7 @@ import config from "./config";
 import { prisma } from "./lib/prisma";
 import bcrypt from "bcryptjs";
 import { userRoutes } from "./modules/users/user.route";
+import { authRoutes } from "./modules/auth/auth.route";
 const app: Application=express();
 app.use(cors({
     origin:config.app_url,
@@ -19,5 +20,6 @@ app.get("/",async(req:Request,res:Response) => {
     res.send("Hello world")
     })
 
-    app.use("/api/user",userRoutes)
+    app.use("/api/users",userRoutes)
+    app.use("/api/auth",authRoutes)
 export default app;
