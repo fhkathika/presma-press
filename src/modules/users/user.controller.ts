@@ -4,7 +4,8 @@ import httpStatus from "http-status";
 import { userService } from "./user.service";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
-
+import jwt from "jsonwebtoken"
+import config from "../../config";
 // const registerUser=async(req:Request,res:Response)=>{
 
 // try{
@@ -47,7 +48,15 @@ sendResponse(res,{
     }
 })
 })
+const getMyProfile=catchAsync(async (req:Request,res:Response,next:NextFunction)=>{
+const cookies=req.cookies;
+console.log(cookies)
+// const verifiedToken=jwt.verify(accessToken,config.jwt_access_secret)
+// console.log("verifiedToken",verifiedToken)
+res.send("Get my profile")
+})
 
     export const  userController={
-        registerUser
+        registerUser,
+        getMyProfile
     }

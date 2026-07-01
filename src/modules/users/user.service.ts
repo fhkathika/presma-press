@@ -48,7 +48,11 @@ const user=await prisma.user.findUnique({
 })
 return user
 }
+const getMyProfileFromDB=async()=>{
+
+}
 
 export  const userService={
-    registerUserIntoDb
+    registerUserIntoDb,
+    getMyProfileFromDB
 }
