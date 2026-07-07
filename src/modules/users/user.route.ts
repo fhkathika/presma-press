@@ -26,8 +26,9 @@ router.post("/register",userController.registerUser)
 
 const auth=(...requiredRoles:Role[])=>{
   return catchAsync(async (req:Request,res:Response,next:NextFunction)=>{
-    const token=req.cookies.asscessToken || req.headers.authorization?.startsWith("Bearer")?
-    req.headers.authorization?.split(" ")[1]:req.headers.authorization;
+    const token=req.cookies.asscessToken 
+    // || req.headers.authorization?.startsWith("Bearer")?
+    // req.headers.authorization?.split(" ")[1]:req.headers.authorization;
 
     if(!token){
       throw new Error("You are not logged in .lpease log in to access resource");
@@ -59,11 +60,12 @@ if(user.activeStatus==="BLOCKED"){
 req.user={
   email,name,id,role
 }
+next()
 
   })
 }
 router.get("/me",
-  auth(Role.ADMIN,Role.USER,Role.AUTHER)
+  auth(Role.ADMIN,Role.USER,Role.AUTHER),
 //   (req:Request,res:Response,next:NextFunction)=>{
 // console.log(req.cookies)  
 // const {accessToken}=req.cookies;
