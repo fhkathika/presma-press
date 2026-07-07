@@ -48,8 +48,17 @@ const user=await prisma.user.findUnique({
 })
 return user
 }
-const getMyProfileFromDB=async()=>{
+const getMyProfileFromDB=async(userId:string)=>{
+const user=await prisma.user.findFirstOrThrow({
+    where:{id:userId},
+    omit:{
+        password:true
+    },
+    include:{
 
+    }
+})
+return user
 }
 
 export  const userService={

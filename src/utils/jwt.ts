@@ -6,6 +6,26 @@ const token=jwt.sign(payload,secret,
         expiresIn} as SignOptions)
         return token
 }
+
+const verifyToken=(token:string,secret:string)=>{
+    try{
+   const verifiedToken= jwt.verify(token,secret);
+   return {
+    success:true,
+    data:verifiedToken
+   }
+    }
+    catch(err:any){
+        console.log("Token verification failed")
+   return {
+    success:false,
+    error:err.message
+   }
+    }
+
+
+}
 export const jwtUtills={
-    createToken
+    createToken,
+    verifyToken
 }
