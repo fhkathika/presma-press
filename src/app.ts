@@ -7,6 +7,8 @@ import { prisma } from "./lib/prisma";
 import bcrypt from "bcryptjs";
 import { userRoutes } from "./modules/users/user.route";
 import { authRoutes } from "./modules/auth/auth.route";
+import { commentRoutes } from "./modules/comment/comment.route";
+import { postRoutes } from "./modules/post/post.route";
 const app: Application=express();
 app.use(cors({
     origin:config.app_url,

@@ -18,7 +18,7 @@ router.get(
     postController.getPostStatus
 )
 router.get(
-    "/my post",auth(Role.USER,Role.ADMIN,Role.AUTHER),
+    "/my-posts",auth(Role.USER,Role.ADMIN,Role.AUTHER),
     postController.getMyPosts
 )
 router.get(
@@ -33,4 +33,6 @@ router.delete(
     "/:postId",auth(Role.USER,Role.ADMIN,Role.AUTHER),
     postController.deletePost
 )
+
+export const postRoutes=router;
 

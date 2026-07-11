@@ -29,5 +29,5 @@ router.put(
     "/:commentId/moderate",auth(Role.USER,Role.ADMIN,Role.AUTHER),
     commentController.moderateComment
 )
-
+export const commentRoutes=router
 
