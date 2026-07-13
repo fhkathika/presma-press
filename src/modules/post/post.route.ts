@@ -14,7 +14,7 @@ router.get(
     postController.getAllPost
 )
 router.get(
-    "/status",auth(Role.ADMIN),
+    "/stats",auth(Role.ADMIN),
     postController.getPostStatus
 )
 router.get(
