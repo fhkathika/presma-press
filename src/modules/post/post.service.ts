@@ -138,9 +138,52 @@ return result
 }
 const  getAllPost=async()=>{
 const posts=await prisma.post.findMany({
-    where:{
-        title:"Getting Started with TypeScript post 2"
-    },
+
+    //filter or exact match 
+    // where:{
+    //     title:"Getting Started with TypeScript post 2"  
+    //   },
+//     where:{
+// AND:[
+//     {
+//         title:"Getting Started with TypeScript post 2",
+//     },
+//     {
+//         content:"Ronaldo"
+//     }
+// ]
+//     },
+
+//search or partial matching 
+// where:{
+//     title:{
+//         contains:"Ronaldo",
+//         mode:"insensitive"
+
+//     },
+//     content:{
+//       contains:"Ronaldo"
+//     }
+// },
+
+// where:{
+//     OR:[
+// {
+//    title:{
+//     contains:"Ronado",
+//     mode:"insensitive"
+//    } 
+// },
+// {
+//     content:{
+//         contains:"Ronaldo",
+//         mode:"insensitive"
+//     }
+// }
+//     ]
+// },
+
+// page= 3 ,limit/take=10=>skip(page-1)*limit
     include:{
         author:{
             omit:{password:true}
