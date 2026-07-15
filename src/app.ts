@@ -1,5 +1,5 @@
 import cookieParser from "cookie-parser";
-import express, { Application, Request, Response } from "express";
+import express, { Application, NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import cors from "cors"
 import config from "./config";
@@ -9,6 +9,9 @@ import { userRoutes } from "./modules/users/user.route";
 import { authRoutes } from "./modules/auth/auth.route";
 import { commentRoutes } from "./modules/comment/comment.route";
 import { postRoutes } from "./modules/post/post.route";
+import { notFound } from "../prisma/schema/middlewares/notFound";
+import { globalErrorHandler } from "../prisma/schema/middlewares/globalErrorHandler";
+
 const app: Application=express();
 app.use(cors({
     origin:config.app_url,
@@ -26,4 +29,7 @@ app.get("/",async(req:Request,res:Response) => {
     app.use("/api/auth",authRoutes)
     app.use("/api/posts",postRoutes)
     app.use("/api/comments",commentRoutes)
+
+    app.use(notFound)
+    app.use(globalErrorHandler)
 export default app;

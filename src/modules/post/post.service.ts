@@ -1,6 +1,7 @@
 import { CommentStatus, PostStatus } from "../../../generated/prisma/enums"
+import { PostWhereInput } from "../../../generated/prisma/models"
 import { prisma } from "../../lib/prisma"
-import { ICreatePostPayload, IUpdatePostPayload } from "./post.interface"
+import { ICreatePostPayload, IPostQuery, IUpdatePostPayload } from "./post.interface"
 
 const createPost=async(payload:ICreatePostPayload,userId :string)=>{
    const result=await prisma.post.create({
@@ -136,7 +137,69 @@ include:{
 });
 return result
 }
-const  getAllPost=async()=>{
+
+
+const  getAllPost=async(query:IPostQuery)=>{
+    const limit=query.limit?Number(query.limit):10
+    const page=query.page?Number(query.page):1
+    const skip=(page-1)*limit
+    const sortBy=query?.sortBy?query?.sortBy:"createdAt"
+    const sortOrder=query?.sortOrder?query?.sortOrder:"desc"
+    const andConditioins: PostWhereInput[]=[]
+    const tags=query.tags?JSON.parse(query.tags as string):null
+    const tagsArray=Array.isArray(tags)?tags:[]
+console.log("first")
+if(query.searchTerm){
+andConditioins.push({
+      OR:[
+{
+   title:{
+    contains:"Ronado",
+    mode:"insensitive"
+   } 
+},
+{
+    content:{
+        contains:"Ronaldo",
+        mode:"insensitive"
+    }
+}
+    ]
+})
+}
+if(query.title){
+    andConditioins.push({
+        title:query.title
+    })
+}
+if(query.content){
+    andConditioins.push({
+        content:query.content
+    })
+}
+if(query.authorId){
+    andConditioins.push({
+        authorId:query.authorId
+    })
+}
+if(query.isFeatured){
+    andConditioins.push({
+        isFeatured:query.isFeatured
+    })
+}
+if(query.tags){
+    andConditioins.push({
+        tags:{
+            hasSome:tagsArray
+        }
+    })
+}
+if(query.status){
+    andConditioins.push({
+        status:query.status
+        
+    })
+}
 const posts=await prisma.post.findMany({
 
     //filter or exact match 
@@ -184,7 +247,42 @@ const posts=await prisma.post.findMany({
 // },
 
 // page= 3 ,limit/take=10=>skip(page-1)*limit
-    include:{
+    
+// where:{
+// AND:[
+//     query.searchTerm?{
+// OR:[
+//     {
+//     title:{
+//         contains:query.searchTerm,
+//         mode:"insensitive"
+//     },
+   
+// },
+// {
+//       content:{
+//         contains:query.searchTerm,
+//         mode:"insensitive"
+//     },
+// }
+// ]
+
+//     }:{},
+//         query.title?{title:query.title}:{},
+//         query.content?{content:query.content}:{}
+    
+// ]
+// },
+where:{
+    AND:andConditioins
+},
+take:limit,
+skip:skip,
+orderBy:{
+    //sortBy:sortOrder
+[sortBy]:sortOrder
+},
+include:{
         author:{
             omit:{password:true}
         },
