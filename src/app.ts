@@ -11,6 +11,7 @@ import { commentRoutes } from "./modules/comment/comment.route";
 import { postRoutes } from "./modules/post/post.route";
 import { notFound } from "../prisma/schema/middlewares/notFound";
 import { globalErrorHandler } from "../prisma/schema/middlewares/globalErrorHandler";
+import { subcriptionRoute } from "../prisma/schema/middlewares/subcription/subcription.route";
 
 const app: Application=express();
 app.use(cors({
@@ -29,7 +30,8 @@ app.get("/",async(req:Request,res:Response) => {
     app.use("/api/auth",authRoutes)
     app.use("/api/posts",postRoutes)
     app.use("/api/comments",commentRoutes)
-
+  app.use("/api/subcription",subcriptionRoute)
     app.use(notFound)
     app.use(globalErrorHandler)
+  
 export default app;
