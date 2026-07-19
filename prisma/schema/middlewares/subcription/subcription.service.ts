@@ -44,7 +44,34 @@ return session.url
     paymentUrl:transectionResult
  }
 }
+const handleWebhook=async(payload:Buffer,signature:string)=>{
+  const endpointSecrect=config.sripe_webhook_secret
+  const event=stripe.webhooks.constructEvent(
+    payload,
+    signature,
+    endpointSecrect
+  )
+
+   switch (event.type) {
+    case 'checkout.session.completed':
+      const paymentIntent = event.data.object;
+    
+      break;
+    case 'customer.subscription.updated':
+      const paymentMethod = event.data.object;
+      // Then define and call a method to handle the successful attachment of a PaymentMethod.
+      // handlePaymentMethodAttached(paymentMethod);
+      break;
+      case 'customer.subscription.deleted':
+        break;
+    default:
+      // Unexpected event type
+      console.log(`Unhandled event type ${event.type}.`);
+      break;
+  }
+}
 
 export const subcriptionServices={
-    createCheckOutSession
+    createCheckOutSession,
+    handleWebhook
 }
