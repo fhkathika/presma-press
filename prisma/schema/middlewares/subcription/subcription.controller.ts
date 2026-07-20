@@ -21,7 +21,7 @@ const handleWebhook=catchAsync(async(req:Request,res:Response,next:NextFunction)
   
     const event =req.body as Buffer;
     const signature=req.headers['stripe-signature']!;
-
+console.log("Webhook controller hit");
     await subcriptionServices.handleWebhook(event,signature as string)
     sendResponse(res,{
         success:true,

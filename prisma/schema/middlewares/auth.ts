@@ -21,7 +21,7 @@ declare global {
 export const auth=(...requiredRoles:Role[])=>{
 
   return catchAsync(async (req:Request,res:Response,next:NextFunction)=>{
-      console.log("user",req.user?.role);
+      console.log("userss",req.user?.role);
     const token=req.cookies.asscessToken ?req.cookies.asscessToken
     :req.headers.authorization?.startsWith("Bearer")?
     req.headers.authorization?.split(" ")[1]:req.headers.authorization;

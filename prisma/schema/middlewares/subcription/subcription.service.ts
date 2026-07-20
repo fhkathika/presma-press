@@ -1,8 +1,12 @@
+import Stripe from "stripe"
 import config from "../../../../src/config"
 import { prisma } from "../../../../src/lib/prisma"
 import { stripe } from "../../../../src/lib/stripe"
+import status from "http-status"
 
 const createCheckOutSession=async(userId:string)=>{
+
+    console.log("createCheckOutSession called")
 const transectionResult=await prisma.$transaction(async(tx)=>{
 const user=await tx.user.findUniqueOrThrow({
     where:{
@@ -45,6 +49,7 @@ return session.url
  }
 }
 const handleWebhook=async(payload:Buffer,signature:string)=>{
+    console.log("handleWebhook called")
   const endpointSecrect=config.sripe_webhook_secret
   const event=stripe.webhooks.constructEvent(
     payload,
@@ -54,8 +59,7 @@ const handleWebhook=async(payload:Buffer,signature:string)=>{
 
    switch (event.type) {
     case 'checkout.session.completed':
-      const paymentIntent = event.data.object;
-    
+     await handleCheckOutCompleted(event.data.object)
       break;
     case 'customer.subscription.updated':
       const paymentMethod = event.data.object;
@@ -71,6 +75,49 @@ const handleWebhook=async(payload:Buffer,signature:string)=>{
   }
 }
 
+
+const getPeriodEnd=(payload:Stripe.Subscription)=>{
+  const currentPeriodEndInMiliseconds=payload.items.data[0]?.current_period_end!
+const currentPeriodEnd= new Date(currentPeriodEndInMiliseconds*1000)
+return currentPeriodEnd
+}
+const handleCheckOutCompleted=async (session:Stripe.Checkout.Session)=>{
+
+      const userId=session.metadata?.userId 
+      const stripeCustomerId=session.customer as string
+      const stripeSubcriptionId=session.subscription as string
+
+      if(!userId || !stripeSubcriptionId || !stripeCustomerId){
+throw new Error("Webhook Failed")
+      }
+
+      const stripeSubcription=await stripe.subscriptions.retrieve(stripeSubcriptionId)
+    console.log("sub info",stripeSubcription.items.data[0])
+  const currentPeriodEnd=getPeriodEnd(stripeSubcription)
+
+await prisma.subscription.upsert({
+    where :{
+        userId
+    },
+    create:{
+userId,
+stripeCustomerId,
+stripeSubcriptionId,
+status:"ACTIVE",
+currentPeriodEnd,
+    },
+    update:{
+stripeCustomerId,
+stripeSubcriptionId,
+status:"ACTIVE",
+currentPeriodEnd
+    }
+})
+}
+
+const handleChangedSubcription=(payload:Stripe.Subcription)=>{
+
+}
 export const subcriptionServices={
     createCheckOutSession,
     handleWebhook
